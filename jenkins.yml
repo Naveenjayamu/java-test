@@ -1,0 +1,26 @@
+name: Trigger Jenkins Build
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trigger-jenkins:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Jenkins Multi-Branch Scan / Build
+        env:
+          JENKINS_URL: "http://13.48.6.176:8080"
+          JENKINS_USER: "naveen"
+          # Store your Jenkins API Token in GitHub Secrets: Settings -> Secrets and variables -> Actions
+          JENKINS_TOKEN: ${{ secrets.JENKINS_API_TOKEN }}
+          JOB_NAME: "my-multibranch-project"
+        run: |
+          echo "Triggering Jenkins job: ${JOB_NAME}"
+          curl -X POST "${JENKINS_URL}/job/${JOB_NAME}/build" \
+            --user "${JENKINS_USER}:${JENKINS_TOKEN}"
